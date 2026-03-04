@@ -4,6 +4,7 @@ import User from "../models/user.model.js"
 
 export const googleAuth = async (req,res) => {
     try {
+        const isProduction = process.env.NODE_ENV === "production";
         const {name , email} = req.body
         let user = await User.findOne({email})
         if(!user){
@@ -14,9 +15,9 @@ export const googleAuth = async (req,res) => {
         }
         let token = await genToken(user._id)
         res.cookie("token" , token , {
-            http:true,
-            secure:false,
-            sameSite:"strict",
+            httpOnly:true,
+            secure:isProduction,
+            sameSite:isProduction ? "none" : "lax",
             maxAge:7 * 24 * 60 * 60 * 1000
         })
 
@@ -32,7 +33,12 @@ export const googleAuth = async (req,res) => {
 
 export const logOut = async (req,res) => {
     try {
-        await res.clearCookie("token")
+        const isProduction = process.env.NODE_ENV === "production";
+        await res.clearCookie("token" , {
+            httpOnly:true,
+            secure:isProduction,
+            sameSite:isProduction ? "none" : "lax",
+        })
         return res.status(200).json({message:"LogOut Successfully"})
     } catch (error) {
          return res.status(500).json({message:`Logout error ${error}`})
