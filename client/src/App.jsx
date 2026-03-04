@@ -11,6 +11,7 @@ import InterviewHistory from './pages/InterviewHistory'
 import Pricing from './pages/Pricing'
 import InterviewReport from './pages/InterviewReport'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ServerUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:8000"
 
 function App() {
